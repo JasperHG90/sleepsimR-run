@@ -1,12 +1,22 @@
-httr::http_error("http://localhost:5002")
+library(httr)
 
-httr::content(httr::GET("http://localhost:5002/info"))
+# Check for error
+http_error("http://localhost:5002")
 
-params <- httr::content(httr::POST("http://localhost:5002/parameters", body=list("uid"= "abcde"), encode = "json"))
-iid <- params$iteration_id
+# Get the number of allocated/completed iterations
+content(GET("http://localhost:5002/info", authenticate(user="container", password="mypwd")))
 
+# Retrieve a set of parameters
+params <- content(GET("http://localhost:5002/parameters",
+                      #add_headers("uid" = "abcdef"),
+                      authenticate(user="container", password="mypwd"),
+                      encode = "json"))
+# Get iteration id
+iid <- params$iteration_id[[1]]
+
+# Make bs list of parameters
 nb <- list(
-  "uid" = "abcde",
+  "uid" = "abcdef",
   "scenario_uid" = params$scenario_id[[1]],
   "iteration_uid" = params$iteration_id[[1]],
   "emiss_mu_bar" = c(3,1,9),
@@ -16,4 +26,8 @@ nb <- list(
   "credible_intervals" = c(4,1,2)
 )
 
-httr::content(httr::POST("http://localhost:5002/results", body=nb, encode="json"))
+# POST
+content(POST("http://localhost:5002/results",
+             body=nb,
+             authenticate(user="container", password="mypwd"),
+             encode="json"))
