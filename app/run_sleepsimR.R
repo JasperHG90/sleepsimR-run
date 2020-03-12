@@ -31,8 +31,6 @@ main <- function(username = argv$username, password = argv$password, host = argv
   # Set host, user, pwd
   set_host(host)
   set_usr_pwd(password, username)
-  print(password)
-  print(username)
   # Check if the host is running
   can_connect <- check_connection()
   # Emit message
