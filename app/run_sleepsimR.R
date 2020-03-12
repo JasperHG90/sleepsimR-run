@@ -7,8 +7,8 @@ library(logger)
 # Set up a parser
 args <- arg_parser("Simulate normalized EEG/EOG data and run a multilevel hidden markov model (mHMM)")
 # Add arguments
-args <- add_argument(args, "username", help="User name used to authenticate with the API.", type="character")
-args <- add_argument(args, "password", help="Password used to authenticate with the API.", type="character")
+args <- add_argument(args, "--username", help="User name used to authenticate with the API.", type="character", default=NULL)
+args <- add_argument(args, "--password", help="Password used to authenticate with the API.", type="character", default=NULL)
 args <- add_argument(args, "--host", help="Host address on which the sleepsimR API is running.", default="http://localhost:5002")
 # Parse
 argv <- parse_args(args)
@@ -28,9 +28,22 @@ log_info("Application is starting up ...")
 #' @details This function runs one out of 36.000 iterations that I have defined
 #'     in my master thesis. ...
 main <- function(username = argv$username, password = argv$password, host = argv$host) {
+  # Check if passed
+  if(is.null(username)) {
+    if(Sys.getenv("SLEEPSIMR_API_USERNAME") == "") {
+      stop("Environment variable 'SLEEPSIMR_API_USERNAME' not set but is required. Either pass it to the docker container using --username <username> or set it as an environment variable")
+    }
+  }
+  if(is.null(password)) {
+    if(Sys.getenv("SLEEPSIMR_API_PASSWORD") == "") {
+      stop("Environment variable 'SLEEPSIMR_API_PASSWORD' not set but is required. Either pass it to the docker container using --password <password> or set it as an environment variable")
+    }
+  }
   # Set host, user, pwd
   set_host(host)
-  set_usr_pwd(password, username)
+  if(!is.null(password) & !is.null(username)) {
+    set_usr_pwd(password, username)
+  }
   # Check if the host is running
   can_connect <- check_connection()
   # Emit message
