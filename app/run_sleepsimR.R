@@ -76,6 +76,7 @@ main <- function(username = argv$username, password = argv$password, host = argv
   # Run model
   mod <- sleepsimR::run_mHMM(tdf, start_values = start_values, hyperprior_means = hyp_priors,
                   model_seed = sim$model_seed,mcmc_iterations=2500, mcmc_burn_in = 500)
+  # Get label switch overview
   # Transpose this matrix so that, at analysis time, I can always call byrow=TRUE. Otherwise,
   #  this is the only value with this problem
   label_switcharoo <- as.vector(t(mod$label_switch))
