@@ -106,6 +106,11 @@ main <- function(username = argv$username, password = argv$password, host = argv
                                            "emiss_varmu_bar" = ci_emiss_varmu_bar
                                        ),
                                        label_switch = label_switcharoo)
+  # Save data?
+  if(sim$save_model) {
+    log_info("Saving complete model to disk ...")
+    saveRDS(mod, paste0(file.path("/var/sleepsimR", sim$iteration_id), ".rds"))
+  }
   # If resp is terminate, then we out!
   if(resp$message == "terminate") {
     log_info("Successfully finished iteration. Exiting gracefully ...")
