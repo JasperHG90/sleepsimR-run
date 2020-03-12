@@ -45,7 +45,9 @@ main <- function(username = argv$username, password = argv$password, host = argv
     }
   }
   # Set host, user, pwd
-  set_host(host)
+  if(!is.null(host)) {
+    set_host(host)
+  }
   if(!is.null(password) & !is.null(username)) {
     set_usr_pwd(password, username)
   }
