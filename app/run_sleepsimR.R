@@ -28,9 +28,6 @@ log_info("Application is starting up ...")
 #' @details This function runs one out of 36.000 iterations that I have defined
 #'     in my master thesis. ...
 main <- function(username = argv$username, password = argv$password, host = argv$host) {
-  print(username)
-  print(password)
-  print(host)
   # Check if passed
   if(is.na(username)) {
     if(Sys.getenv("SLEEPSIMR_API_USERNAME") == "") {
@@ -58,7 +55,7 @@ main <- function(username = argv$username, password = argv$password, host = argv
   can_connect <- check_connection()
   # Emit message
   if(can_connect) {
-    log_info(paste0("sleepsimR API is up and running at host ", host, ". Ready to query parameters ..."))
+    log_info(paste0("sleepsimR API is up and running at host ", Sys.getenv("SLEEPSIMR_MASTER_HOST"), ". Ready to query parameters ..."))
   } else {
     log_error(paste0("Cannot connect to sleepsimR API at host ", host, ". Exiting now ..."))
   }
