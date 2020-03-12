@@ -80,8 +80,8 @@ main <- function(username = argv$username, password = argv$password, host = argv
   # Transpose this matrix so that, at analysis time, I can always call byrow=TRUE. Otherwise,
   #  this is the only value with this problem
   label_switcharoo <- as.vector(t(mod$label_switch))
-  # Get the original order
-  orig_state_order <- mod$state_orders
+  # Get the order of means by n_dep
+  state_order <- mod$state_orders
   # Remove it from the model
   mod$state_orders <- NULL
   # Get MAP estimates
@@ -110,7 +110,7 @@ main <- function(username = argv$username, password = argv$password, host = argv
                                            "emiss_varmu_bar" = ci_emiss_varmu_bar
                                        ),
                                        label_switch = label_switcharoo,
-                                       state_orders = orig_state_order)
+                                       state_order = state_order)
   # Save data?
   if(sim$save_model) {
     log_info("Saving complete model to disk ...")
