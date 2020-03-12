@@ -9,7 +9,7 @@ args <- arg_parser("Simulate normalized EEG/EOG data and run a multilevel hidden
 # Add arguments
 args <- add_argument(args, "--username", help="User name used to authenticate with the API.", type="character", default=NULL)
 args <- add_argument(args, "--password", help="Password used to authenticate with the API.", type="character", default=NULL)
-args <- add_argument(args, "--host", help="Host address on which the sleepsimR API is running.", default="http://localhost:5002")
+args <- add_argument(args, "--host", help="Host address on which the sleepsimR API is running.", default=NULL)
 # Parse
 argv <- parse_args(args)
 
@@ -37,6 +37,11 @@ main <- function(username = argv$username, password = argv$password, host = argv
   if(is.null(password)) {
     if(Sys.getenv("SLEEPSIMR_API_PASSWORD") == "") {
       stop("Environment variable 'SLEEPSIMR_API_PASSWORD' not set but is required. Either pass it to the docker container using --password <password> or set it as an environment variable")
+    }
+  }
+  if(is.null(host)) {
+    if(Sys.getenv("SLEEPSIMR_MASTER_HOST") == "") {
+      stop("Environment variable 'SLEEPSIMR_MASTER_HOST' not set but is required. Either pass it to the docker container using --host <host> or set it as an environment variable")
     }
   }
   # Set host, user, pwd
