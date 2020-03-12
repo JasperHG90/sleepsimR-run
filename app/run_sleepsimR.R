@@ -72,9 +72,13 @@ main <- function(username = argv$username, password = argv$password, host = argv
     matrix(unlist(sim$start_emiss$EOG_min_beta),
            ncol=2, byrow=TRUE)
   )
+  log_info("Running model ...")
   # Run model
-  mod <- run_mHMM(tdf, start_values = start_values, hyperprior_means = hyp_priors,
-                  model_seed = sim$mseed,mcmc_iterations=2500, mcmc_burn_in = 500)
+  mod <- sleepsimR::run_mHMM(tdf, start_values = start_values, hyperprior_means = hyp_priors,
+                  model_seed = sim$model_seed,mcmc_iterations=2500, mcmc_burn_in = 500)
+  # Transpose this matrix so that, at analysis time, I can always call byrow=TRUE. Otherwise,
+  #  this is the only value with this problem
+  label_switcharoo <- as.vector(t(mod$label_switch))
   # Get MAP estimates
   map_mod <- MAP(mod)
   # Ignore values I don't care about
@@ -82,21 +86,27 @@ main <- function(username = argv$username, password = argv$password, host = argv
   map_mod$gamma_int_subj <- NULL
   map_mod$gamma_prob_bar <- NULL
   map_mod$gamma_naccept <- NULL # Not sure I want to throw this away!
-  # LABEL SWITCHING!
   # Get credible intervals
   mod_burned <- burn(mod)
-  ci_gamma_int <- credible_interval(mod_burned$gamma_int_bar)
+  ci_gamma_int <- as.vector(credible_interval(mod_burned$gamma_int_bar))
   ci_emiss_mu_bar <- lapply(mod_burned$emiss_mu_bar, function(x) as.vector(credible_interval(x)))
   ci_emiss_var_bar <- lapply(mod_burned$emiss_var_bar, function(x) as.vector(credible_interval(x)))
   ci_emiss_varmu_bar <- lapply(mod_burned$emiss_varmu_bar, function(x) as.vector(credible_interval(x)))
   # Make output list
-  register_simulation_outcomes(sim$scenario_id, sim$iteration_id, emiss_mu_bar = map_mod$emiss_mu_bar,
-                               gamma_int_bar = map_mod$gamma_int_bar, emiss_var_bar = map_mod$emiss_var_bar,
-                               emiss_varmu_bar = map_mod$emiss_varmu_bar, credible_interval = list(
-                                 "gamma_int_bar" = ci_gamma_int,
-                                 "emiss_mu_bar" = ci_emiss_mu_bar,
-                                 "emiss_var_bar" = ci_emiss_var_bar,
-                                 "emiss_varmu_bar" = ci_emiss_varmu_bar
-                               ))
-
+  resp <- register_simulation_outcomes(sim$scenario_id, sim$iteration_id,
+                                       emiss_mu_bar = map_mod$emiss_mu_bar,
+                                       gamma_int_bar = map_mod$gamma_int_bar,
+                                       emiss_var_bar = map_mod$emiss_var_bar,
+                                       emiss_varmu_bar = map_mod$emiss_varmu_bar,
+                                       credible_interval = list(
+                                           "gamma_int_bar" = ci_gamma_int,
+                                           "emiss_mu_bar" = ci_emiss_mu_bar,
+                                           "emiss_var_bar" = ci_emiss_var_bar,
+                                           "emiss_varmu_bar" = ci_emiss_varmu_bar
+                                       ),
+                                       label_switch = label_switcharoo)
+  # If resp is terminate, then we out!
+  if(resp$message == "terminate") {
+    log_info("Successfully finished iteration. Exiting gracefully ...")
+  }
 }
