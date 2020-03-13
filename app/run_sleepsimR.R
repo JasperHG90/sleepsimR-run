@@ -77,6 +77,10 @@ main <- function(username = argv$username, password = argv$password, host = argv
   # Query parameters
   log_info("Querying parameters ...")
   sim <- query_simulation_settings()
+  # If no more simulations, stop
+  if("message" %in% names(sim)) {
+    stop(sim$message)
+  }
   log_info(paste0("Successfully queried parameters. Working on iteration ", sim$iteration_id, " ..."))
   # Simulate dataset
   log_info("Simulating dataset ...")

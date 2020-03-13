@@ -1,4 +1,4 @@
-##
+## Base image
 FROM r-base
 
 # Install R devtools
