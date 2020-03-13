@@ -14,10 +14,9 @@ args <- add_argument(args, "--host", help="Host address on which the sleepsimR A
 argv <- parse_args(args)
 
 # Set up the logger
-#log_threshold("INFO")
 log_info("Application is starting up ...")
 
-#' Main function
+#' Main function. Runs a single iteration of my simulation study
 #'
 #' @param username string. username used to authenticate with the API.
 #' @param password string. password used to authenticate with the API.
@@ -25,8 +24,24 @@ log_info("Application is starting up ...")
 #'
 #' @return exits silently after getting kill command from the API.
 #'
-#' @details This function runs one out of 36.000 iterations that I have defined
-#'     in my master thesis. ...
+#' @details This function runs one out of 36.000 iterations that make up my simulation study.
+#'     This program uses the R library sleepsimR <https://github.com/JasperHG90/sleepsimR>
+#'     to simulate a dataset and run the multilevel hidden markov model implemented by my
+#'     supervisor Dr. Emmeke Aarts in the R library mHMMbayes <https://github.com/emmekeaarts/mHMMbayes>.
+#'     The program assumes that you are running the sleepsimR API <https://github.com/JasperHG90/sleepsimR-api>
+#'     either locally or at some publicly reachable address. It proceeds as follows:
+#'      (1) Query simulation settings (parameters, number of subjects etc.) from the API
+#'          using the sleepsimRapiClient R library <https://github.com/JasperHG90/sleepsimRapiClient>
+#'      (2) Run the mHMM on the simulated dataset
+#'      (3) Extract parameter estimates
+#'      (4) Send the results back to the API
+#'      (5) If the simulation settings include the command to save the entire model file
+#'          (happens with approx. 5% of all models), then save the model file in the folder
+#'          /var/sleepsimR.
+#'    This program has been designed to run inside a docker container. It is hosted on docker
+#'    hub <https://hub.docker.com/r/jhginn/sleepsimr-run> and registered on Zenodo under the
+#'    DOI: 10.5281/zenodo.3709058 <https://zenodo.org/record/3709058>. Please read the README
+#'    for detailed information on setting up this program.
 main <- function(username = argv$username, password = argv$password, host = argv$host) {
   # Check if passed
   if(is.na(username)) {
