@@ -2,3 +2,5 @@ sleepsimR-run.code-workspace
 .Rproj.user
 .RData
 .Rhistory
+runfile
+*.simg
