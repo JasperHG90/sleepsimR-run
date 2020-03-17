@@ -8,10 +8,10 @@ RUN apt-get update && \
 
 ## Install sleepsimR api client
 RUN R -e "remotes::install_github('emmekeaarts/mHMMbayes@369420e05cb96e6af761a8bd9bd30b8539d27a24', dependencies='Imports')"
-RUN R -e "remotes::install_github('JasperHG90/sleepsimR@21b7b0cf931d4c618463fbdc04aaec5d59f1dfec', dependencies='Imports')"
-RUN R -e "remotes::install_github('JasperHG90/sleepsimRapiClient@1e04b525fd1b3617ef635a68b90892e3e649e940', dependencies='Imports')"
 RUN R -e "install.packages('argparser')"
 RUN R -e "install.packages('logger')"
+RUN R -e "remotes::install_github('JasperHG90/sleepsimR@v0.3', dependencies='Imports')"
+RUN R -e "remotes::install_github('JasperHG90/sleepsimRapiClient@v0.2', dependencies='Imports')"
 
 ## Copy app
 COPY ./app /app
