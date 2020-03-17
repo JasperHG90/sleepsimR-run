@@ -81,7 +81,8 @@ main <- function(username = argv$username, password = argv$password, host = argv
   if("message" %in% names(sim)) {
     stop(sim$message)
   }
-  log_info(paste0("Successfully queried parameters. Working on iteration ", sim$iteration_id, " ..."))
+  log_info(paste0("Successfully queried parameters. Working on iteration ", sim$iteration_id,
+                  "With parameters", "..."))
   # Simulate dataset
   log_info("Simulating dataset ...")
   data_simulated <- simulate_dataset(sim$n, sim$n_t, sim$zeta, sim$Q, sim$dsim_seed)
@@ -126,10 +127,18 @@ main <- function(username = argv$username, password = argv$password, host = argv
   # Get MAP estimates
   map_mod <- MAP(mod)
   # Ignore values I don't care about
-  map_mod$PD_subj <- NULL
   map_mod$gamma_int_subj <- NULL
   map_mod$gamma_prob_bar <- NULL
   map_mod$gamma_naccept <- NULL # Not sure I want to throw this away!
+  # Post-process subject-specific estimates of means
+  map_mod$PD_subj <- lapply(map_mod$PD_subj, function(x) {
+    # Indices to grab
+    idx <- m * length(sim$start_emiss)
+    x$mean <- x$mean[1:idx]
+    x$median <- x$median[1:idx]
+    x$SE <- x$SE[1:idx]
+    return(x)
+  })
   # Get credible intervals
   mod_burned <- burn(mod)
   ci_gamma_int <- as.vector(credible_interval(mod_burned$gamma_int_bar))
@@ -138,6 +147,7 @@ main <- function(username = argv$username, password = argv$password, host = argv
   ci_emiss_varmu_bar <- lapply(mod_burned$emiss_varmu_bar, function(x) as.vector(credible_interval(x)))
   # Make output list
   resp <- register_simulation_outcomes(sim$scenario_id, sim$iteration_id,
+                                       PD_subj = map_mod$PD_subj,
                                        emiss_mu_bar = map_mod$emiss_mu_bar,
                                        gamma_int_bar = map_mod$gamma_int_bar,
                                        emiss_var_bar = map_mod$emiss_var_bar,
