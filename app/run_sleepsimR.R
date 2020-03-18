@@ -115,7 +115,7 @@ main <- function(username = argv$username, password = argv$password, host = argv
   log_info("Running model ...")
   # Run model
   mod <- sleepsimR::run_mHMM(tdf, start_values = start_values, hyperprior_means = hyp_priors,
-                  model_seed = sim$model_seed,mcmc_iterations=2500, mcmc_burn_in = 500)
+                  model_seed = sim$model_seed,mcmc_iterations=3250, mcmc_burn_in = 1250)
   # Get label switch overview
   # Transpose this matrix so that, at analysis time, I can always call byrow=TRUE. Otherwise,
   #  this is the only value with this problem
