@@ -10,8 +10,8 @@ RUN apt-get update && \
 RUN R -e "remotes::install_github('emmekeaarts/mHMMbayes@369420e05cb96e6af761a8bd9bd30b8539d27a24', dependencies='Imports')"
 RUN R -e "install.packages('argparser')"
 RUN R -e "install.packages('logger')"
-RUN R -e "remotes::install_github('JasperHG90/sleepsimR@v0.3', dependencies='Imports')"
-RUN R -e "remotes::install_github('JasperHG90/sleepsimRapiClient@v0.2', dependencies='Imports')"
+RUN R -e "remotes::install_github('JasperHG90/sleepsimR@29cfb9e511cf2a7056c8dc17a27d48dd642e9262', dependencies='Imports')"
+RUN R -e "remotes::install_github('JasperHG90/sleepsimRapiClient@9f85b4570e514d419f11297c4d78cbfa660827ac', dependencies='Imports')"
 
 ## Copy app
 COPY ./app /app

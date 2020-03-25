@@ -95,10 +95,13 @@ main <- function(username = argv$username, password = argv$password, host = argv
   )
   states <- data_simulated$states[,2]
   # Get summary statistics for each
+  em1 <- tapply(tdf[,-1]$EEG_mean_beta, states, mean)
+  em2 <- tapply(tdf[,-1]$EOG_median_theta, states, mean)
+  em3 <- tapply(tdf[,-1]$EOG_min_beta, states, mean)
   hyp_priors <- list(
-    as.vector(tapply(tdf[,-1]$EEG_mean_beta, states, mean)),
-    as.vector(tapply(tdf[,-1]$EOG_median_theta, states, mean)),
-    as.vector(tapply(tdf[,-1]$EOG_min_beta, states, mean))
+    as.vector(em1[sort.list(as.numeric(names(em1)))]),
+    as.vector(em2[sort.list(as.numeric(names(em2)))]),
+    as.vector(em3[sort.list(as.numeric(names(em3)))])
   )
   # Reshape start values
   m <- sqrt(length(sim$start_gamma$tpm))
@@ -115,7 +118,8 @@ main <- function(username = argv$username, password = argv$password, host = argv
   log_info("Running model ...")
   # Run model
   mod <- sleepsimR::run_mHMM(tdf, start_values = start_values, hyperprior_means = hyp_priors,
-                  model_seed = sim$model_seed,mcmc_iterations=3250, mcmc_burn_in = 1250)
+                             model_seed = sim$model_seed,mcmc_iterations=3250, mcmc_burn_in = 1250,
+                             order_data = FALSE)
   # Get label switch overview
   # Transpose this matrix so that, at analysis time, I can always call byrow=TRUE. Otherwise,
   #  this is the only value with this problem
@@ -125,6 +129,7 @@ main <- function(username = argv$username, password = argv$password, host = argv
   # Remove it from the model
   mod$state_orders <- NULL
   # Get MAP estimates
+  mm2 <- map_mod
   map_mod <- MAP(mod)
   # Ignore values I don't care about
   map_mod$gamma_int_subj <- NULL
