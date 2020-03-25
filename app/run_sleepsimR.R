@@ -126,10 +126,15 @@ main <- function(username = argv$username, password = argv$password, host = argv
   label_switcharoo <- as.vector(t(mod$label_switch))
   # Get the order of means by n_dep
   state_order <- mod$state_orders
+  # If NULL, then make placeholder value
+  if(any(vapply(state_order, is.null, TRUE))) {
+    for(idx in seq_along(state_order)) {
+      state_order[[idx]] <- c(0,0,0)
+    }
+  }
   # Remove it from the model
   mod$state_orders <- NULL
   # Get MAP estimates
-  mm2 <- map_mod
   map_mod <- MAP(mod)
   # Ignore values I don't care about
   map_mod$gamma_int_subj <- NULL
