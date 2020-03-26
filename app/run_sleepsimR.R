@@ -138,7 +138,7 @@ main <- function(username = argv$username, password = argv$password, host = argv
   map_mod <- MAP(mod)
   # Ignore values I don't care about
   map_mod$gamma_int_subj <- NULL
-  map_mod$gamma_prob_bar <- NULL
+  map_mod$gamma_int_bar <- NULL
   map_mod$gamma_naccept <- NULL # Not sure I want to throw this away!
   # Post-process subject-specific estimates of means
   map_mod$PD_subj <- lapply(map_mod$PD_subj, function(x) {
@@ -151,7 +151,7 @@ main <- function(username = argv$username, password = argv$password, host = argv
   })
   # Get credible intervals
   mod_burned <- burn(mod)
-  ci_gamma_int <- as.vector(credible_interval(mod_burned$gamma_int_bar))
+  ci_gamma_prob <- as.vector(credible_interval(mod_burned$gamma_prob_bar))
   ci_emiss_mu_bar <- lapply(mod_burned$emiss_mu_bar, function(x) as.vector(credible_interval(x)))
   ci_emiss_var_bar <- lapply(mod_burned$emiss_var_bar, function(x) as.vector(credible_interval(x)))
   ci_emiss_varmu_bar <- lapply(mod_burned$emiss_varmu_bar, function(x) as.vector(credible_interval(x)))
@@ -159,11 +159,11 @@ main <- function(username = argv$username, password = argv$password, host = argv
   resp <- register_simulation_outcomes(sim$scenario_id, sim$iteration_id,
                                        PD_subj = map_mod$PD_subj,
                                        emiss_mu_bar = map_mod$emiss_mu_bar,
-                                       gamma_int_bar = map_mod$gamma_int_bar,
+                                       gamma_prob_bar = map_mod$gamma_prob_bar,
                                        emiss_var_bar = map_mod$emiss_var_bar,
                                        emiss_varmu_bar = map_mod$emiss_varmu_bar,
                                        credible_interval = list(
-                                           "gamma_int_bar" = ci_gamma_int,
+                                           "gamma_prob_bar" = ci_gamma_prob,
                                            "emiss_mu_bar" = ci_emiss_mu_bar,
                                            "emiss_var_bar" = ci_emiss_var_bar,
                                            "emiss_varmu_bar" = ci_emiss_varmu_bar
