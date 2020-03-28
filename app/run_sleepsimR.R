@@ -151,10 +151,14 @@ main <- function(username = argv$username, password = argv$password, host = argv
   })
   # Get credible intervals
   mod_burned <- burn(mod)
-  ci_gamma_prob <- as.vector(credible_interval(mod_burned$gamma_prob_bar))
-  ci_emiss_mu_bar <- lapply(mod_burned$emiss_mu_bar, function(x) as.vector(credible_interval(x)))
-  ci_emiss_var_bar <- lapply(mod_burned$emiss_var_bar, function(x) as.vector(credible_interval(x)))
-  ci_emiss_varmu_bar <- lapply(mod_burned$emiss_varmu_bar, function(x) as.vector(credible_interval(x)))
+  ci_gamma_prob95 <- as.vector(credible_interval(mod_burned$gamma_prob_bar, "0.95"))
+  ci_emiss_mu_bar95 <- lapply(mod_burned$emiss_mu_bar, function(x) as.vector(credible_interval(x, "0.95")))
+  ci_emiss_var_bar95 <- lapply(mod_burned$emiss_var_bar, function(x) as.vector(credible_interval(x, "0.95")))
+  ci_emiss_varmu_bar95 <- lapply(mod_burned$emiss_varmu_bar, function(x) as.vector(credible_interval(x,"0.95")))
+  ci_gamma_prob99 <- as.vector(credible_interval(mod_burned$gamma_prob_bar, "0.99"))
+  ci_emiss_mu_bar99 <- lapply(mod_burned$emiss_mu_bar, function(x) as.vector(credible_interval(x, "0.99")))
+  ci_emiss_var_bar99 <- lapply(mod_burned$emiss_var_bar, function(x) as.vector(credible_interval(x, "0.99")))
+  ci_emiss_varmu_bar99 <- lapply(mod_burned$emiss_varmu_bar, function(x) as.vector(credible_interval(x,"0.99")))
   # Make output list
   resp <- register_simulation_outcomes(sim$scenario_id, sim$iteration_id,
                                        PD_subj = map_mod$PD_subj,
@@ -163,10 +167,14 @@ main <- function(username = argv$username, password = argv$password, host = argv
                                        emiss_var_bar = map_mod$emiss_var_bar,
                                        emiss_varmu_bar = map_mod$emiss_varmu_bar,
                                        credible_interval = list(
-                                           "gamma_prob_bar" = ci_gamma_prob,
-                                           "emiss_mu_bar" = ci_emiss_mu_bar,
-                                           "emiss_var_bar" = ci_emiss_var_bar,
-                                           "emiss_varmu_bar" = ci_emiss_varmu_bar
+                                           "gamma_prob_bar95" = ci_gamma_prob95,
+                                           "emiss_mu_bar95" = ci_emiss_mu_bar95,
+                                           "emiss_var_bar95" = ci_emiss_var_bar95,
+                                           "emiss_varmu_bar95" = ci_emiss_varmu_bar95,
+                                           "gamma_prob_bar99" = ci_gamma_prob99,
+                                           "emiss_mu_bar99" = ci_emiss_mu_bar99,
+                                           "emiss_var_bar99" = ci_emiss_var_bar99,
+                                           "emiss_varmu_bar99" = ci_emiss_varmu_bar99
                                        ),
                                        label_switch = label_switcharoo,
                                        state_order = state_order)
