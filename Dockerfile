@@ -10,6 +10,8 @@ RUN apt-get update && \
 RUN R -e "remotes::install_github('emmekeaarts/mHMMbayes@369420e05cb96e6af761a8bd9bd30b8539d27a24', dependencies='Imports')"
 RUN R -e "install.packages('argparser')"
 RUN R -e "install.packages('logger')"
+RUN R -e "install.packages('tidyr')"
+RUN R -e "install.packages('dplyr')"
 RUN R -e "remotes::install_github('JasperHG90/sleepsimR@b447b736a6f74f8e037353ad822558db0d8392be', dependencies='Imports')"
 RUN R -e "remotes::install_github('JasperHG90/sleepsimRapiClient@426471c14fdc0d695eb58270154763eaeef56148', dependencies='Imports')"
 

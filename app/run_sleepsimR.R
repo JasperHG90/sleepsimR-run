@@ -115,12 +115,27 @@ main <- function(username = argv$username, password = argv$password, host = argv
     matrix(unlist(sim$start_emiss$EOG_min_beta),
            ncol=2, byrow=TRUE)
   )
-  log_info("Running model ...")
+  # Get between-subject variance estimate for each variable
+  betsv1 <- tdf %>%
+    mutate(state = states) %>%
+    gather(var, val, -state, -id) %>%
+    group_by(id, var, state) %>%
+    summarize(meanv = mean(val)) %>%
+    ungroup() %>%
+    group_by(var, state) %>%
+    summarize(meanvar = var(meanv))
+  # Replace the starting values with between-subject variance in data
+  start_values[[2]][,2] <- betsv1$meanvar[1:3]
+  start_values[[3]][,2] <- betsv1$meanvar[4:6]
+  start_values[[4]][,2] <- betsv1$meanvar[7:9]
+  # Number of states/dependent variables
+  # (hard-code these)
   mprop <- list(
     "m" = 3,
     "n_dep" = 3
   )
   # Run model
+  log_info("Running model ...")
   mod <- sleepsimR::run_mHMM(tdf, start_values = start_values, mprop = mprop, hyperprior_means = hyp_priors,
                              model_seed = sim$model_seed,mcmc_iterations=3250, mcmc_burn_in = 1250,
                              order_data = FALSE)
