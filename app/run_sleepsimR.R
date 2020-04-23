@@ -116,8 +116,12 @@ main <- function(username = argv$username, password = argv$password, host = argv
            ncol=2, byrow=TRUE)
   )
   log_info("Running model ...")
+  mprop <- list(
+    "m" = 3,
+    "n_dep" = 3
+  )
   # Run model
-  mod <- sleepsimR::run_mHMM(tdf, start_values = start_values, hyperprior_means = hyp_priors,
+  mod <- sleepsimR::run_mHMM(tdf, start_values = start_values, mprop = mprop, hyperprior_means = hyp_priors,
                              model_seed = sim$model_seed,mcmc_iterations=3250, mcmc_burn_in = 1250,
                              order_data = FALSE)
   # Get label switch overview
