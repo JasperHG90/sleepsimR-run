@@ -3,6 +3,8 @@ library(sleepsimR)
 library(sleepsimRapiClient)
 library(argparser, quietly=TRUE)
 library(logger)
+library(dplyr)
+library(tidyr)
 
 # Set up a parser
 args <- arg_parser("Simulate normalized EEG/EOG data and run a multilevel hidden markov model (mHMM)")
