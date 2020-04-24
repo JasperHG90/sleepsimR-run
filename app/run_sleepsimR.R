@@ -3,8 +3,6 @@ library(sleepsimR)
 library(sleepsimRapiClient)
 library(argparser, quietly=TRUE)
 library(logger)
-library(dplyr)
-library(tidyr)
 
 # Set up a parser
 args <- arg_parser("Simulate normalized EEG/EOG data and run a multilevel hidden markov model (mHMM)")
@@ -117,19 +115,6 @@ main <- function(username = argv$username, password = argv$password, host = argv
     matrix(unlist(sim$start_emiss$EOG_min_beta),
            ncol=2, byrow=TRUE)
   )
-  # Get between-subject variance estimate for each variable
-  betsv1 <- tdf %>%
-    mutate(state = states) %>%
-    gather(var, val, -state, -id) %>%
-    group_by(id, var, state) %>%
-    summarize(meanv = mean(val)) %>%
-    ungroup() %>%
-    group_by(var, state) %>%
-    summarize(meanvar = var(meanv))
-  # Replace the starting values with between-subject variance in data
-  start_values[[2]][,2] <- betsv1$meanvar[1:3]
-  start_values[[3]][,2] <- betsv1$meanvar[4:6]
-  start_values[[4]][,2] <- betsv1$meanvar[7:9]
   # Number of states/dependent variables
   # (hard-code these)
   mprop <- list(
