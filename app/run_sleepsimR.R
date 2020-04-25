@@ -4,6 +4,11 @@ library(sleepsimRapiClient)
 library(argparser, quietly=TRUE)
 library(logger)
 
+# Set to old simulation values
+opts <- getOption("sleepsimR_simulate")
+opts$emission_bar <- opts$emission_bar_original_failed
+options("sleepsimR_simulate" = opts)
+
 # Set up a parser
 args <- arg_parser("Simulate normalized EEG/EOG data and run a multilevel hidden markov model (mHMM)")
 # Add arguments
