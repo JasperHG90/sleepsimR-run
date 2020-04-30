@@ -11,6 +11,12 @@ opts$emission_bar <- opts$emission_bar_original_failed
 opts$emission_bar[[1]][,1] <- c(-3.9, -1, 2.4)
 opts$emission_bar[[2]][,1] <- c(3.05, -3.4, -0.5)
 opts$emission_bar[[3]][,1] <- c(0.4, 3.5, -2.8)
+# Lower self-transitions
+diag(opts$gamma_bar) <- c(0.8, 0.7, 0.64)
+opts$gamma_bar[1,2:3] <- c(0.1, 0.1)
+opts$gamma_bar[2,c(1,3)] <- c(0.15, 0.15)
+opts$gamma_bar[3,c(1:2)] <- c(0.18, 0.18)
+# Set options
 options("sleepsimR_simulate" = opts)
 
 # Set up a parser
