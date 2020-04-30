@@ -4,9 +4,13 @@ library(sleepsimRapiClient)
 library(argparser, quietly=TRUE)
 library(logger)
 
-# Set to old simulation values
+# Set to baseline values
 opts <- getOption("sleepsimR_simulate")
+# Spread means
 opts$emission_bar <- opts$emission_bar_original_failed
+opts$emission_bar[[1]][,1] <- c(-3.9, -1, 2.4)
+opts$emission_bar[[2]][,1] <- c(3.05, -3.4, -0.5)
+opts$emission_bar[[3]][,1] <- c(0.4, 3.5, -2.8)
 options("sleepsimR_simulate" = opts)
 
 # Set up a parser
